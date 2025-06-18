@@ -69,8 +69,8 @@ async fn secure_color() -> impl Responder {
 }
 
 // This handler demonstrates server-side sanitization in Rust.
-#[get("/sanitized_color_example")]
-async fn sanitized_color_example(params: web::Query<ColorParams>) -> impl Responder {
+#[get("/sanitized_color")]
+async fn sanitized_color(params: web::Query<ColorParams>) -> impl Responder {
     // Sanitize user-supplied input on the server as a general rule.
     let unsafe_color = params.color.clone().unwrap_or_default();
     let safe_color = clean(&*unsafe_color); // Use ammonia to strip any HTML.
@@ -92,8 +92,8 @@ async fn sanitized_color_example(params: web::Query<ColorParams>) -> impl Respon
 }
 
 // This handler demonstrates adding a CSP header in Rust.
-#[get("/csp_example")]
-async fn csp_example() -> impl Responder {
+#[get("/csp")]
+async fn csp() -> impl Responder {
     let html = r#"
         <!DOCTYPE html>
         <html>
@@ -120,15 +120,15 @@ async fn main() -> std::io::Result<()> {
     println!("Server running at http://127.0.0.1:3000");
     println!("- Vulnerable Color Page: http://127.0.0.1:3000/vulnerable_color");
     println!("- Secure Color Page:     http://127.0.0.1:3000/secure_color");
-    println!("- Sanitized Color Example: http://127.0.0.1:3000/sanitized_color_example");
-    println!("- CSP Example:           http://127.0.0.1:3000/csp_example");
+    println!("- Sanitized Color Example: http://127.0.0.1:3000/sanitized_color");
+    println!("- CSP Example:           http://127.0.0.1:3000/csp");
 
     HttpServer::new(|| {
         App::new()
             .service(vulnerable_color)
             .service(secure_color)
-            .service(sanitized_color_example)
-            .service(csp_example)
+            .service(sanitized_color)
+            .service(csp)
     })
     .bind(("127.0.0.1", 3000))?
     .run()
