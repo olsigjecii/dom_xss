@@ -1,9 +1,9 @@
 use actix_web::{App, HttpResponse, HttpServer, Responder, get, web};
+use ammonia::clean;
 use serde::Deserialize;
-
 #[derive(Deserialize)]
 struct ColorParams {
-    _color: Option<String>,
+    color: Option<String>,
 }
 
 // --- VULNERABLE COLOR ROUTE ---
@@ -68,14 +68,43 @@ async fn secure_color() -> impl Responder {
     HttpResponse::Ok().content_type("text/html").body(html)
 }
 
+// This handler demonstrates server-side sanitization in Rust.
+#[get("/sanitized_color_example")]
+async fn sanitized_color_example(params: web::Query<ColorParams>) -> impl Responder {
+    // Sanitize user-supplied input on the server as a general rule.
+    let unsafe_color = params.color.clone().unwrap_or_default();
+    let safe_color = clean(&*unsafe_color); // Use ammonia to strip any HTML.
+
+    let html = format!(
+        r#"
+        <!DOCTYPE html>
+        <html>
+        <head><title>Sanitized Page</title></head>
+        <body style="color: {};">
+            <h1>Color set to '{}' via server-side sanitization.</h1>
+        </body>
+        </html>
+    "#,
+        safe_color, safe_color
+    );
+
+    HttpResponse::Ok().content_type("text/html").body(html)
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     println!("Server running at http://127.0.0.1:3000");
     println!("- Vulnerable Color Page: http://127.0.0.1:3000/vulnerable_color");
     println!("- Secure Color Page:     http://127.0.0.1:3000/secure_color");
+    println!("- Sanitized Color Example: http://127.0.0.1:3000/sanitized_color_example");
 
-    HttpServer::new(|| App::new().service(vulnerable_color).service(secure_color))
-        .bind(("127.0.0.1", 3000))?
-        .run()
-        .await
+    HttpServer::new(|| {
+        App::new()
+            .service(vulnerable_color)
+            .service(secure_color)
+            .service(sanitized_color_example)
+    })
+    .bind(("127.0.0.1", 3000))?
+    .run()
+    .await
 }
