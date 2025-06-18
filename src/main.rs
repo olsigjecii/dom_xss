@@ -91,18 +91,44 @@ async fn sanitized_color_example(params: web::Query<ColorParams>) -> impl Respon
     HttpResponse::Ok().content_type("text/html").body(html)
 }
 
+// This handler demonstrates adding a CSP header in Rust.
+#[get("/csp_example")]
+async fn csp_example() -> impl Responder {
+    let html = r#"
+        <!DOCTYPE html>
+        <html>
+        <head><title>CSP Protected Page</title></head>
+        <body>
+            <h1>This page is protected by a Content Security Policy.</h1>
+            </body>
+        </html>
+    "#;
+
+    HttpResponse::Ok()
+        .content_type("text/html")
+        // This CSP header is set by the Rust backend to mitigate XSS.
+        // This policy disallows inline scripts, a common XSS vector.
+        .insert_header((
+            "Content-Security-Policy",
+            "default-src 'self'; script-src 'self'",
+        ))
+        .body(html)
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     println!("Server running at http://127.0.0.1:3000");
     println!("- Vulnerable Color Page: http://127.0.0.1:3000/vulnerable_color");
     println!("- Secure Color Page:     http://127.0.0.1:3000/secure_color");
     println!("- Sanitized Color Example: http://127.0.0.1:3000/sanitized_color_example");
+    println!("- CSP Example:           http://127.0.0.1:3000/csp_example");
 
     HttpServer::new(|| {
         App::new()
             .service(vulnerable_color)
             .service(secure_color)
             .service(sanitized_color_example)
+            .service(csp_example)
     })
     .bind(("127.0.0.1", 3000))?
     .run()

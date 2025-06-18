@@ -41,20 +41,16 @@ cargo run
 
 ```bash
 
-
-Test the Secure Route:
-# Open your browser and navigate to the following URL: 
-http://127.0.0.1:3000/secure_color?color=%3Cimg%20src=x%20onerror=%22alert(%27It%20Worked!%27)%22%3E
-# Result: The text color will likely not change because the value is not a valid color. No alert box will appear. This is the correct, secure behavior.
-
-Test the Secure Route with amonia sanitization crate:
-# Open your browser and navigate to the following URL: 
-http://127.0.0.1:3000/sanitized_color_example?color=%3Cimg%20src=x%20onerror=%22alert(%27It%20Worked!%27)%22%3E
-# Result: The text color will likely not change because the value is not a valid color. No alert box will appear. This is the correct, secure behavior.
-
-
-Test the Vulnerable Route:
-# Now, navigate to the vulnerable endpoint with the same payload: 
+# Test the Vulnerable Route:
 http://127.0.0.1:3000/vulnerable_color?color=%3Cimg%20src=x%20onerror=%22alert(%27It%20Worked!%27)%22%3E
-# Result: An alert box with the message "XSS" should pop up in your browser. This demonstrates the successful execution of the injected script.
+# -----------------------------------------------------------------------------------------
+
+# Test the Secure Route:
+http://127.0.0.1:3000/secure_color?color=%3Cimg%20src=x%20onerror=%22alert(%27It%20Worked!%27)%22%3E
+
+# Test the Secure Route with amonia sanitization crate:
+http://127.0.0.1:3000/sanitized_color_example?color=%3Cimg%20src=x%20onerror=%22alert(%27It%20Worked!%27)%22%3E
+
+# Test the Secure Route with CSP headers:
+http://127.0.0.1:3000/csp_example?color=%3Cimg%20src=x%20onerror=%22alert(%27It%20Worked!%27)%22%3E
 ```
