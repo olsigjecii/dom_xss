@@ -66,7 +66,7 @@ This approach demonstrates cleaning user input on the server before it's even se
 Sanitized Endpoint: http://127.0.0.1:3000/sanitized_color
 Description: The Rust handler for this route uses the ammonia crate to strip all HTML tags from the color parameter before embedding it in the page.
 
-How to Test: Using the malicious payload will result in the <img> tag being completely removed by the server. The style will be applied with an empty string.
+How to Test: Using the malicious payload will result in the `<img>` tag being completely removed by the server. The style will be applied with an empty string.
 http://127.0.0.1:3000/sanitized_color?color=%3Cimg%20src=x%20onerror=%22alert('This%20will%20not%20fire')%22%3E
 4. Mitigation 3: Content Security Policy (CSP)
 This shows how the Rust server can instruct the browser to enforce a security policy as a powerful second layer of defense.
