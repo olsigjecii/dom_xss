@@ -6,7 +6,7 @@ struct ColorParams {
     _color: Option<String>,
 }
 
-// --- WORKING VULNERABLE COLOR ROUTE ---
+// --- VULNERABLE COLOR ROUTE ---
 #[get("/vulnerable_color")]
 async fn vulnerable_color(_params: web::Query<ColorParams>) -> impl Responder {
     let html = r#"
