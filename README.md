@@ -1,5 +1,4 @@
-Snyk Learn
-Custom Gem
+# Understanding DOM XSS in Rust with actix-web in Rust 🦀
 
 Show thinking
 Of course. A good README.md is essential for any project, especially an educational one. Based on our entire conversation and the final code we developed, here is a comprehensive README file in Markdown format.
